@@ -16,12 +16,13 @@ module.exports = (connection) => {
    * @return Promise[Integer] uid promise
    */
   function insert(recordType, record, isTransactionStarted) {
-    if (!isTransactionStarted) {
-      return withTransaction(connection)(() => insert(recordType, record, true));
-    }
-
     /* only value-existing fields */
     const foreignTypeFields = getForeignTypeFields(recordType).filter(f => !!record[f.id]);
+    const hasForeignTypeQuery = foreignTypeFields.length > 0;
+
+    if (hasForeignTypeQuery && !isTransactionStarted) {
+      return withTransaction(connection)(() => insert(recordType, record, true));
+    }
 
     /* save outer type records */
     const foreignTypeIdsPromise =
