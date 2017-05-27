@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+- '6'
+- stable
+after_success:
+- npm install -g codeclimate-test-reporter
+- codeclimate-test-reporter < coverage/lcov.info
+sudo: false
+cache:
+  directories:
+  - node_modules
+addons:
+  code_climate:
+    repo_token: db16591127376c88027c85c7c179275027134c1ec36cc60e509f90c7c049f64b
+deploy:
+  email: koike.takayuki0907@gmail.com
+  provider: npm
+  api_key: 
+    secure: UuuyIGYNWu42KBaYpmcQv/TLpEPbei6zAhBzqye8Wm5iI03UwH22wClcm8u9Mf8K+Ol7gPwnmOb7uUfP1+OqL5GpwEysYaBeRQgD5+boNjDEi+C00FJubRY1B0P8o/Yqed3HHB5F4fIKUI0jte5bVgl/VOx5DAv+WrpjberJfB6HKkh9vbsSuSP1Ta4lrzMj3ffjWMTeNGDoXSvlvG+VlEFXX0tOlopBj8k+5VVAK0E1n/b6DkWGjBTp39+lvbdfzmSYpeCbMGqvsQNs1PXpWap1JTyIGFnK9LWYbPEdy0QfDVmso0GwbSKGJhTNGaHKvDT747fwlaH8WDjQ9oKtyTQKrFim+rq0lR/EAzsM1JoTXKTap3FYCMLCbb05NzOz7h701m2xyyU3lUOMKggIuMSAZKOFbN2HISsXNswqzPLputq1XzJOjrvE/UKcxfbAOlZ7IhYxOqM+kLKK60WNzoJFeUEKriPpWpapkIbd1ytR9AzZ1KB4PuD01UbG0mm9VeV7rfdT3XuHZDkZmeJm83XswmMLpbkKfI3PAaKDT016v1s4OuS0toOmbGOOaLMz1xk9QYRCWWf/PsMCemwvr2p3asoJ3gGsJMH/5ezq/bPvL6QHCctUf5//BkZF8zOijNn5JkO/NkeADlB/8zT86tHx0q0SJk45W8jFyz7I98A=
+  on:
+    tags: true
