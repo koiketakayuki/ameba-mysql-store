@@ -15,9 +15,9 @@ module.exports = (connection) => {
    * @param isTransactionStarted
    * @return Promise[Integer] uid promise
    */
-  function insert(recordType, record, isTransactionStarted) {
+  function save(recordType, record, isTransactionStarted) {
     if (isArray(record)) {
-      return withTransaction(() => Promise.all(record.map(r => insert(recordType, r, true))));
+      return withTransaction(() => Promise.all(record.map(r => save(recordType, r, true))));
     }
 
     if (record.uid) {
@@ -30,13 +30,13 @@ module.exports = (connection) => {
 
     /* if it contains outer type query */
     if (hasForeignTypeQuery && !isTransactionStarted) {
-      return withTransaction(connection)(() => insert(recordType, record, true));
+      return withTransaction(connection)(() => save(recordType, record, true));
     }
 
     /* save outer type records */
     const foreignTypeIdsPromise =
       Promise.all(foreignTypeFields
-        .map(f => insert(f.fieldType, record[f.id], true)));
+        .map(f => save(f.fieldType, record[f.id], true)));
 
     const replaceForeignTypeValuesWithIds = (originalRecord, foreignTypeIds) => {
       const result = Object.assign({}, originalRecord);
@@ -50,17 +50,17 @@ module.exports = (connection) => {
     return new Promise((success, failure) =>
       foreignTypeIdsPromise
         .then(foreignTypeIds => replaceForeignTypeValuesWithIds(record, foreignTypeIds))
-        .then((insertRecord) => {
+        .then((saveRecord) => {
           const tableName = getTableName(recordType);
-          connection.query(`INSERT INTO ${tableName} VALUES ?`, insertRecord, (err, result) => {
+          connection.query(`INSERT INTO ${tableName} VALUES ?`, saveRecord, (err, result) => {
             if (err) {
               failure(err);
             } else {
-              success(result.insetId);
+              success(result.insertId);
             }
           });
         }));
   }
 
-  return insert;
+  return save;
 };
