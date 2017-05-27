@@ -8,7 +8,7 @@ module.exports = (connection) => {
     return new Promise((success, failure) => {
       connection.query(query, (err, results) => {
         if (err) {
-          failure(results);
+          failure(err);
         } else {
           success(buildRecords(recordType, results));
         }
